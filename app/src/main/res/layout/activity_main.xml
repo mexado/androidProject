@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center"
     android:orientation="vertical"
     tools:context=".MainActivity">
 
@@ -11,8 +12,6 @@
         android:id="@+id/document_text"
         android:layout_width="250dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:ems="10"
         android:hint="Nombre de documento"
         android:inputType="textPersonName" />
 
@@ -20,24 +19,22 @@
         android:id="@+id/btn_selected"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
+        android:text="Seleccionar imagen" />
+
+    <ImageView
+        android:id="@+id/imagen"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_marginTop="10dp"
-        android:text="Seleccionar imagen"
-        android:textAllCaps="false" />
+        android:layout_weight="1"
+        app:srcCompat="@drawable/no_imagen"
+        android:tag="no_foto"/>
 
     <Button
         android:id="@+id/btn_subir"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Subir imagen"
-        android:textAllCaps="false"
-        android:layout_marginTop="10dp"
-        android:layout_gravity="center_horizontal" />
-
-    <ImageView
-        android:id="@+id/imagen"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="10dp"/>
+        />
 
 </LinearLayout>

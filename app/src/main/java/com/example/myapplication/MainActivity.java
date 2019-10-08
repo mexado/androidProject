@@ -21,8 +21,8 @@ import android.provider.MediaStore;
 import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -32,6 +32,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.myapplication.clases.Usuario;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -42,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
 
     Button btn_selected, btn_subir;
     ImageView imageView;
-    TextView document_text;
+    EditText document_text;
     Bitmap bitmap;
 
     private int camara = 1, galeria  = 2;
@@ -70,14 +71,26 @@ public class MainActivity extends AppCompatActivity {
         btn_selected.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                OpenImages();
+                if (document_text.getText().toString().trim().isEmpty()){
+                    document_text.setError("Ingresar el nombre del documento");
+                }else {
+                    OpenImages();
+                }
             }
         });
 
         btn_subir.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                uploadImage();
+                String tag_imagen = String.valueOf(imageView.getTag());
+
+                if (document_text.getText().toString().trim().isEmpty()){
+                    document_text.setError("Ingresar el nombre del documento");
+                }else if(tag_imagen.equals("no_foto")){
+                    Toast.makeText(MainActivity.this, "Selecciona una foto", Toast.LENGTH_LONG).show();
+                }else{
+                    uploadImage();
+                }
             }
         });
     }
@@ -195,6 +208,7 @@ public class MainActivity extends AppCompatActivity {
                     //Cómo obtener el mapa de bits de la Galería
                     bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
                     //Configuración del mapa de bits en ImageView
+                    imageView.setTag("si_foto");
                     imageView.setImageBitmap(bitmap);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -224,6 +238,11 @@ public class MainActivity extends AppCompatActivity {
                     public void onResponse(String response) {
                         loading.dismiss();
                         Toast.makeText(MainActivity.this, response, Toast.LENGTH_LONG).show();
+
+                        document_text.setText("");
+                        imageView.setImageBitmap(null);
+                        imageView.setTag("no_foto");
+                        imageView.setImageResource(R.drawable.no_imagen);
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -234,12 +253,25 @@ public class MainActivity extends AppCompatActivity {
         }){
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
-                String imagen = getStringImagen(bitmap);
-                String nombre = document_text.getText().toString().trim();
+                //ASIGNANDO LOS PARAMETROS A VARIABLES Y CONVIRTIENDO A STRING
 
+                Usuario usuario = new Usuario();                //CLASE QUE CONTIENE DATOS DEL USUARIO
+                String valor_usuario = usuario.getUsuario();    //ASIGNAR DATO DE USUARIO CON SESION ABIERTA
+
+                Intent intent = getIntent();                                              //OBTENER VARIABLES DE ACTIVITY ANTERIOR
+                String valor_id = intent.getStringExtra("id_carpeta");              //OBTENER ID DE LA CARPETA CREADA EN ACTIVITY ANTERIOR
+                String valor_nombre_persona = intent.getStringExtra("nombre");      //OBTENER EL NOMBRE DE LA PERSONA REGISTRADA EN ACTIVITY ANTERIOR
+
+                String imagen = getStringImagen(bitmap);                                  //DATOS DE IMAGEN ELEGIDA
+                String nombre = document_text.getText().toString().trim();                //NOMBRE ASIGNADO A LA IMAGEN
+
+                //PARAMETROS A ENVIAR
                 Map<String,String> map = new HashMap<String,String>();
-                map.put("foto", imagen);
-                map.put("nombre", nombre);
+                map.put("foto", imagen);                                //archivo imagen
+                map.put("nombre", nombre);                              //nombre de la foto
+                map.put("id_carpeta", valor_id);                        //nombre id de la carpeta
+                map.put("nombre_persona", valor_nombre_persona);        //nompre de la persona registrada
+                map.put("usuario", valor_usuario);                      //usuario que hace registro
 
                 return map;
             }
