@@ -7,6 +7,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -62,6 +63,39 @@ public class RegistroActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    //Mostrar alerta de salida al presionar boton fisico Atras
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            salirRegistro();
+        }
+        // para las demas cosas, se reenvia el evento al listener habitual
+        return super.onKeyDown(keyCode, event);
+    }
+
+    //Ventana para mostrar las opciones de salir de activity
+    private void salirRegistro() {
+        final CharSequence[] option = {"Cerrar sesion","Cancelar"};
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(RegistroActivity.this);
+        builder.setTitle("Desea cerrar la sesion?");
+        builder.setItems(option, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                if (option[which].equals("Cerrar sesion")){
+                    finish();
+                }
+                if (option[which].equals("Cancelar")){
+                    dialog.dismiss();
+                }
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     //Ventana para mostrar las opciones de registro

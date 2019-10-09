@@ -2,5 +2,4 @@
     <string name="app_name">Financiera</string>
 
     <string name="url_conexion">http://192.168.0.4/android/</string>
-    <string name="url_documentos">http://192.168.0.4/android/uploads/</string>
 </resources>

@@ -4,14 +4,12 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
 import com.example.myapplication.clases.DataModel;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -49,7 +47,6 @@ public class RvAdapter extends RecyclerView.Adapter<RvAdapter.MyViewHolder> {
     class MyViewHolder extends RecyclerView.ViewHolder{
 
         TextView name;
-        ImageView iv;
 
         public MyViewHolder(View itemView) {
             super(itemView);

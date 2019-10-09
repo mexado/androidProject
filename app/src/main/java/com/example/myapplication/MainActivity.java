@@ -5,6 +5,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -34,10 +36,17 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.myapplication.adapters.RvAdapter;
+import com.example.myapplication.clases.DataModel;
 import com.example.myapplication.clases.Usuario;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -56,6 +65,10 @@ public class MainActivity extends AppCompatActivity {
 
     String UPLOAD_URL = "http://192.168.0.4/android/upload.php";
 
+    ArrayList<DataModel> dataModelArrayList;
+    private RvAdapter rvAdapter;
+    private RecyclerView recyclerView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,6 +77,9 @@ public class MainActivity extends AppCompatActivity {
         btn_selected = findViewById(R.id.btn_selected);
         btn_subir = findViewById(R.id.btn_subir);
         imageView = findViewById(R.id.imagen);
+
+        recyclerView = findViewById(R.id.recycler);
+        fetchingJSON();
 
         document_text = findViewById(R.id.document_text);
 
@@ -152,7 +168,9 @@ public class MainActivity extends AppCompatActivity {
     }
     //FINAL DE SOLICITUD DE PERMISOS
 
-    //Mostrar alerta de salida al precionar boton fisico Atras
+
+
+    //Mostrar alerta de salida al presionar boton fisico Atras
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
@@ -303,6 +321,8 @@ public class MainActivity extends AppCompatActivity {
                         imageView.setImageBitmap(null);
                         imageView.setTag("no_foto");
                         imageView.setImageResource(R.drawable.no_imagen);
+
+                        fetchingJSON();
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -340,4 +360,58 @@ public class MainActivity extends AppCompatActivity {
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         requestQueue.add(stringRequest);
     }
+
+
+
+    private void fetchingJSON() {
+        Intent intent = getIntent();
+        String valor_id = intent.getStringExtra("id_carpeta");
+        String URL = "http://192.168.0.4/android/documentos_lista.php?id_carpeta=" + valor_id;
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, URL,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject obj = new JSONObject(response);
+
+                            dataModelArrayList = new ArrayList<>();
+                            JSONArray dataArray  = obj.getJSONArray("data");
+
+                            for (int i = 0; i < dataArray.length(); i++) {
+
+                                DataModel playerModel = new DataModel();
+                                JSONObject dataobj = dataArray.getJSONObject(i);
+
+                                playerModel.setName_documento(dataobj.getString("nombre_documento"));
+
+                                dataModelArrayList.add(playerModel);
+                            }
+
+                            setupRecycler();
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        //displaying the error in toast if occurrs
+                        Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+        // request queue
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        requestQueue.add(stringRequest);
+    }
+
+    private void setupRecycler(){
+        rvAdapter = new RvAdapter(this,dataModelArrayList);
+        recyclerView.setAdapter(rvAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false));
+    }
+
 }
