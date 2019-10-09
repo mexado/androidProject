@@ -19,9 +19,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Base64;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -41,7 +43,8 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button btn_selected, btn_subir;
+    Button btn_subir;
+    ImageButton btn_selected;
     ImageView imageView;
     EditText document_text;
     Bitmap bitmap;
@@ -89,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
                 }else if(tag_imagen.equals("no_foto")){
                     Toast.makeText(MainActivity.this, "Selecciona una foto", Toast.LENGTH_LONG).show();
                 }else{
-                    uploadImage();
+                    AlertRegistrar();
                 }
             }
         });
@@ -148,6 +151,62 @@ public class MainActivity extends AppCompatActivity {
                 .show();
     }
     //FINAL DE SOLICITUD DE PERMISOS
+
+    //Mostrar alerta de salida al precionar boton fisico Atras
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            salirRegistro();
+        }
+        // para las demas cosas, se reenvia el evento al listener habitual
+        return super.onKeyDown(keyCode, event);
+    }
+
+    //Ventana para mostrar las opciones de salir de activity
+    private void salirRegistro() {
+        final CharSequence[] option = {"Salir","Cancelar"};
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setTitle("Salir del modulo \"Registro de documentos\"?");
+        builder.setItems(option, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                if (option[which].equals("Salir")){
+                    finish();
+                }
+                if (option[which].equals("Cancelar")){
+                    dialog.dismiss();
+                }
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    //Ventana para mostrar las opciones de registro
+    private void AlertRegistrar() {
+        final CharSequence[] option = {"Aceptar","Cancelar"};
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setTitle("Desea subir el documento?");
+        builder.setItems(option, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                if (option[which].equals("Aceptar")){
+                    uploadImage();
+                }
+                if (option[which].equals("Cancelar")){
+                    dialog.dismiss();
+                }
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
 
     //Ventana para mostrar las opciones si con camara o galeria
     private void OpenImages() {
@@ -221,6 +280,7 @@ public class MainActivity extends AppCompatActivity {
                     //Cómo obtener el mapa de bits de la Galería
                     bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
                     //Configuración del mapa de bits en ImageView
+                    imageView.setTag("si_foto");
                     imageView.setImageBitmap(bitmap);
                 } catch (IOException e) {
                     e.printStackTrace();

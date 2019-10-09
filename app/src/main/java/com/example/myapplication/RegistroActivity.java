@@ -2,7 +2,9 @@ package com.example.myapplication;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -31,13 +33,15 @@ public class RegistroActivity extends AppCompatActivity {
     EditText nombre_reg, direccion;
     Button btn_registrar;
 
-    String UPLOAD_URL = "http://192.168.0.4/android/registrar_personas.php";
+    String UPLOAD_URL;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registro);
 
-        nombre = findViewById(R.id.nombre);
+        UPLOAD_URL = getString(R.string.url_conexion);
+
+        nombre = findViewById(R.id.name);
         nombre_reg = findViewById(R.id.nombre_reg);
         direccion = findViewById(R.id.direccion);
 
@@ -50,21 +54,44 @@ public class RegistroActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (nombre_reg.getText().toString().trim().isEmpty()){
-                    nombre_reg.setError("Ingresar nombre de la persona");
+                    nombre_reg.setError("Ingresar nombre");
                 }else if(direccion.getText().toString().trim().isEmpty()){
-                    direccion.setError("Ingresa la direccion");
+                    direccion.setError("Ingresar direccion");
                 }else{
-                    RegistrarPersona();
+                    AlertRegistrar();
                 }
             }
         });
+    }
+
+    //Ventana para mostrar las opciones de registro
+    private void AlertRegistrar() {
+        final CharSequence[] option = {"Aceptar","Cancelar"};
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(RegistroActivity.this);
+        builder.setTitle("Los datos estan correctos?");
+        builder.setItems(option, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                if (option[which].equals("Aceptar")){
+                    RegistrarPersona();
+                }
+                if (option[which].equals("Cancelar")){
+                    dialog.dismiss();
+                }
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     //Envios usando volley
     public void RegistrarPersona() {
         final ProgressDialog loading = ProgressDialog.show(this, "Registrando persona", "Enviando los datos, espere...");
 
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, UPLOAD_URL,
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, UPLOAD_URL+"registrar_personas.php",
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -72,10 +99,10 @@ public class RegistroActivity extends AppCompatActivity {
 
                         try {
                             JSONObject object=new JSONObject(response);
-
                             if (object.getBoolean("success")){
 
-                                Toast.makeText(getApplicationContext(),"Datos insertados correctamente", Toast.LENGTH_LONG).show();
+                                nombre_reg.setText("");
+                                direccion.setText("");
 
                                 Intent intent = new Intent(RegistroActivity.this, MainActivity.class);
                                 intent.putExtra("nombre", object.getString("nombre").trim());
@@ -101,7 +128,7 @@ public class RegistroActivity extends AppCompatActivity {
                 String nombre_registrar = nombre_reg.getText().toString().trim();
                 String direccion_registrar = direccion.getText().toString().trim();
 
-                Map<String,String> map = new HashMap<String,String>();
+                Map<String,String> map = new HashMap<>();
                 map.put("nombre_reg", nombre_registrar);
                 map.put("direccion", direccion_registrar);
 
