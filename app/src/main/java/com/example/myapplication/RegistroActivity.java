@@ -123,7 +123,7 @@ public class RegistroActivity extends AppCompatActivity {
 
     //Envios usando volley
     public void RegistrarPersona() {
-        final ProgressDialog loading = ProgressDialog.show(this, "Registrando persona", "Enviando los datos, espere...");
+        final ProgressDialog loading = ProgressDialog.show(this, "Registrando persona", "Enviando datos, espere...");
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, UPLOAD_URL+"registrar_personas.php",
                 new Response.Listener<String>() {

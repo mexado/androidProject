@@ -68,7 +68,7 @@ public class LoginActivity extends AppCompatActivity {
 
     //Envios usando volley
     public void IniciarSesion() {
-        final ProgressDialog loading = ProgressDialog.show(this, "Iniciar sesion", "Validando datos, espere...");
+        final ProgressDialog loading = ProgressDialog.show(this, "Iniciando sesion", "Validando datos, espere...");
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL+"iniciar_sesion.php",
                 new Response.Listener<String>() {

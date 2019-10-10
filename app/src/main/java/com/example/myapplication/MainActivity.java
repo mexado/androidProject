@@ -16,6 +16,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -63,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
 
     Uri image_uri;
 
-    String UPLOAD_URL = "http://192.168.0.4/android/upload.php";
+    String UPLOAD_URL;
 
     ArrayList<DataModel> dataModelArrayList;
     private RvAdapter rvAdapter;
@@ -73,6 +74,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        UPLOAD_URL = getString(R.string.url_conexion);
 
         btn_selected = findViewById(R.id.btn_selected);
         btn_subir = findViewById(R.id.btn_subir);
@@ -268,6 +271,21 @@ public class MainActivity extends AppCompatActivity {
 
     public String getStringImagen(Bitmap bmp) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+        /*
+        int width = bmp.getWidth();
+        int height = bmp.getHeight();
+        float scaleWidth = ((float) 1406) / width;
+        float scaleHeight = ((float) 2500) / height;
+        // CREATE A MATRIX FOR THE MANIPULATION
+        Matrix matrix = new Matrix();
+        // RESIZE THE BIT MAP
+        matrix.postScale(scaleWidth, scaleHeight);
+
+        // "RECREATE" THE NEW BITMAP
+        Bitmap resizedBitmap = Bitmap.createBitmap(bmp, 0, 0, width, height, matrix, false);
+        */
+
         bmp.compress(Bitmap.CompressFormat.JPEG, 70, baos);
         byte[] imageBytes = baos.toByteArray();
         String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
@@ -310,7 +328,7 @@ public class MainActivity extends AppCompatActivity {
     //Enviar usando volley
     public void uploadImage() {
         final ProgressDialog loading = ProgressDialog.show(this, "Subiendo...", "Espere por favor");
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, UPLOAD_URL,
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, UPLOAD_URL+"upload.php",
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -366,7 +384,7 @@ public class MainActivity extends AppCompatActivity {
     private void fetchingJSON() {
         Intent intent = getIntent();
         String valor_id = intent.getStringExtra("id_carpeta");
-        String URL = "http://192.168.0.4/android/documentos_lista.php?id_carpeta=" + valor_id;
+        String URL = UPLOAD_URL+ "documentos_lista.php?id_carpeta=" + valor_id;
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, URL,
                 new Response.Listener<String>() {

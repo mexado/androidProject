@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Financiera</string>
 
-    <string name="url_conexion">http://192.168.0.4/android/</string>
+    <string name="url_conexion">http://clientes.casoti.org.mx/financiera/</string>
+    <string name="url_conexionkasmdlkamdslk">http://172.20.2.80/android/</string>
 </resources>
