@@ -60,17 +60,21 @@
                 android:id="@+id/textView3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Buscar persona"
-                android:textAlignment="center" />
-
-            <TextView
-                android:id="@+id/textView4"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Proximamente"
+                android:text="Buscar personas registradas"
                 android:textAlignment="center"
-                android:textColor="#000"
                 android:textSize="20sp" />
+
+            <Button
+                android:id="@+id/btn_buscar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/button_style"
+                android:padding="15dp"
+                android:text="Abrir buscador"
+                android:textColor="#fff" />
+
         </LinearLayout>
 
         <LinearLayout
@@ -107,7 +111,7 @@
                 android:textSize="17sp" />
 
             <EditText
-                android:id="@+id/direccion"
+                android:id="@+id/direccionBD"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"

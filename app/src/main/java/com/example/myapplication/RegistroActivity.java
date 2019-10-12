@@ -32,7 +32,7 @@ public class RegistroActivity extends AppCompatActivity {
 
     TextView nombre;
     EditText nombre_reg, direccion;
-    Button btn_registrar;
+    Button btn_registrar, btn_buscar;
 
     String UPLOAD_URL;
     @Override
@@ -44,9 +44,10 @@ public class RegistroActivity extends AppCompatActivity {
 
         nombre = findViewById(R.id.name);
         nombre_reg = findViewById(R.id.nombre_reg);
-        direccion = findViewById(R.id.direccion);
+        direccion = findViewById(R.id.direccionBD);
 
         btn_registrar = findViewById(R.id.btn_registrar);
+        btn_buscar = findViewById(R.id.btn_buscar);
 
         String nombreUsuario = Usuario.getNombre();//obtener valor del nombre del usuario desde la clase USUARIO()
         nombre.setText(nombreUsuario);
@@ -61,6 +62,14 @@ public class RegistroActivity extends AppCompatActivity {
                 }else{
                     AlertRegistrar();
                 }
+            }
+        });
+
+        btn_buscar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(RegistroActivity.this, SearchActivity.class);
+                startActivity(intent);
             }
         });
     }
